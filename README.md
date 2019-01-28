@@ -1,6 +1,8 @@
 # san-long-list
 
-> 针对[san](https://baidu.github.io/san/)的长列表滚动组件
+> 支持大量数据长列表滚动的[san](https://baidu.github.io/san/)组件。
+>
+> A [san](https://baidu.github.io/san/) component that support big data list with high scroll performance.
 
 ## 安装 Installation
 

@@ -4,17 +4,140 @@
  * @author yangwei
  */
 
-import {DataTypes, defineComponent} from 'san';
+import {DataTypes, Component} from 'san';
 
-export default defineComponent({
-    template: `
+export default class LongList extends Component{
+    get template() {
+        return  `
         <template>
             <div s-ref="scroller" class="{{lClass}}" style="{{wStyle}}" on-scroll="onScroll" on-wheel="onWheel">
                 <div style="{{iStyle}}" class="{{iClass}}">
                     <slot s-for="i in curds" var-item="{{i}}"/>
                 </div>
             </div>
-        </template>`,
+        </template>`;
+    }
+
+    get dataTypes() {
+        return {
+            /**
+            * 是否开启stopScroll (作用同stopScroll 表示在滚动到头的时候整个页面会不会跟着滚动)
+            * @default false
+            */
+            stopScroll: DataTypes.bool,
+
+            /**
+            * 可视区域内显示的个数
+            * @default 5
+            */
+            keeps: DataTypes.number,
+
+            /**
+            * 实际渲染的范围半径(以可视的第一个元素为中心 向前向后分别扩散多少个)
+            * @default 30
+            */
+            radius: DataTypes.number,
+
+            /**
+            * 滚动多少项刷新一次
+            * @default 4
+            */
+            buffer: DataTypes.number,
+
+            /**
+            * 每个item的高度
+            */
+            size: DataTypes.number.isRequired,
+
+            /**
+            * 组件的高度(外层容器) 如果没有设置 就以 keeps * size 作为组件的高度
+            * 参数为 keeps, dl(当前的datasource.length), size
+            * @default (keeps, dl, size) => (keeps * size + 'px')
+            */
+            lHeight: DataTypes.func,
+
+            /**
+            * 外层容器的附加样式 (onScroll那一层)
+            * @default {}
+            */
+            lStyle: DataTypes.object,
+
+            /**
+            * 外层容器的class
+            * @default []
+            */
+            lClass: DataTypes.array,
+
+            /**
+            * 直接包裹大量元素的容器的样式
+            * @default {}
+            */
+            iStyle: DataTypes.object,
+
+            /**
+            * 直接包裹大量元素的容器的class
+            * @default []
+            */
+            iClass: DataTypes.array,
+
+            /**
+            * datasource.length 启用滚动优化的阈值
+            * @default 300
+            */
+            threshold: DataTypes.number
+        };
+    }
+
+    get computed() {
+        return {
+            'wStyle.height'() {
+                let keeps = this.data.get('keeps');
+                let size = this.data.get('size');
+                let dl = this.data.get('datasource').length;
+                let lHeight = this.data.get('lHeight');
+                if (typeof lHeight !== 'function') {
+                    throw new TypeError('(from LongList)lHeight should be a function.');
+                }
+                return lHeight(keeps, dl, size);
+            }
+        };
+    }
+
+    initData() {
+        return {
+            datasource: [],
+            curds: [],
+            keeps: 5,
+            radius: 30,
+            buffer: 4,
+            wStyle: {
+                'overflow-y': 'scroll'
+            },
+            fixHeight: null,
+            stopScroll: true,
+            iStyle: {},
+            threshold: 300,
+            lHeight: (keeps, dl, size) => (keeps * size + 'px'),
+            enable: true
+        };
+    }
+
+    inited() {
+        this.watch('datasource', datasource => this.onDatasourceUpdate(datasource));
+        this.watch('lStyle', lStyle => this.data.merge('wStyle', lStyle));
+        let lStyle = this.data.get('lStyle');
+        lStyle && this.data.merge('wStyle', lStyle);
+    }
+
+    attached() {
+        this._repaintChildren();
+        let {threshold, buffer, datasource} = this.data.get();
+        if (!threshold) {
+            this.data.set('threshold', 2 * buffer + 1);
+        }
+        this.onDatasourceUpdate(datasource);
+    }
+
     onScroll(e) {
         if (!this.data.get('enable')) {
             return;
@@ -31,7 +154,7 @@ export default defineComponent({
         let start = Math.floor(scrollTop / size);
         this.data.set('cache', scrollTop);
         this.update(start, tt);
-    },
+    }
 
     /**
      * @param {number} start 可视范围内第一个item的index
@@ -60,13 +183,8 @@ export default defineComponent({
             'padding-bottom': (datasource.length * size - pt - (radius * 2 - keeps) * size) + 'px'
         };
         this.data.merge('iStyle', iStyle);
-    },
-    inited() {
-        this.watch('datasource', datasource => this.onDatasourceUpdate(datasource));
-        this.watch('lStyle', lStyle => this.data.merge('wStyle', lStyle));
-        let lStyle = this.data.get('lStyle');
-        this.data.merge('wStyle', lStyle);
-    },
+    }
+
     onDatasourceUpdate(datasource) {
         // 如果datasource变化了 需要滚回顶端
         this.ref('scroller').scrollTop = 0;
@@ -88,99 +206,7 @@ export default defineComponent({
             this.data.set('enable', true);
             this.update(0, 0);
         }
-    },
-    initData() {
-        return {
-            datasource: [],
-            curds: [],
-            keeps: 5,
-            radius: 30,
-            buffer: 4,
-            wStyle: {
-                'overflow-y': 'scroll'
-            },
-            fixHeight: null,
-            stopScroll: true,
-            iStyle: {},
-            threshold: 300,
-            lHeight: (keeps, dl, size) => '300px',
-            enable: true
-        };
-    },
-    dataTypes: {
-        /**
-         * 是否开启stopScroll (作用同stopScroll 表示在滚动到头的时候整个页面会不会跟着滚动)
-         * @default false
-         */
-        stopScroll: DataTypes.bool,
-
-        /**
-         * 可视区域内显示的个数
-         * @default 5
-         */
-        keeps: DataTypes.number,
-
-        /**
-         * 实际渲染的范围半径(以可视的第一个元素为中心 向前向后分别扩散多少个)
-         * @default 30
-         */
-        radius: DataTypes.number,
-
-        /**
-         * 滚动多少项刷新一次
-         * @default 4
-         */
-        buffer: DataTypes.number,
-
-        /**
-         * 每个item的高度
-         */
-        size: DataTypes.number.isRequired,
-
-        /**
-         * 组件的高度(外层容器) 如果没有设置 就以 keeps * size 作为组件的高度
-         * 参数为 keeps, dl(当前的datasource.length), size
-         * @default (keeps, dl, size) => '300px'
-         */
-        lHeight: DataTypes.objectOf(DataTypes.function),
-
-        /**
-         * 外层容器的附加样式 (onScroll那一层)
-         * @default {}
-         */
-        lStyle: DataTypes.object,
-
-        /**
-         * 外层容器的class
-         * @default []
-         */
-        lClass: DataTypes.array,
-
-        /**
-         * 直接包裹大量元素的容器的样式
-         * @default {}
-         */
-        iStyle: DataTypes.object,
-
-        /**
-         * 直接包裹大量元素的容器的class
-         * @default []
-         */
-        iClass: DataTypes.array,
-
-        /**
-         * datasource.length 启用滚动优化的阈值
-         * @default 300
-         */
-        threshold: DataTypes.number
-    },
-    attached() {
-        let {threshold, buffer, datasource} = this.data.get();
-        if (!threshold) {
-            this.data.set('threshold', 2 * buffer + 1);
-        }
-        this.onDatasourceUpdate(datasource);
-    },
+    }
 
     /**
      * copy from StopScroll
@@ -205,17 +231,6 @@ export default defineComponent({
             e.preventDefault();
             layer.scrollTop = 0;
         }
-    },
-    computed: {
-        'wStyle.height'() {
-            let keeps = this.data.get('keeps');
-            let size = this.data.get('size');
-            let dl = this.data.get('datasource').length;
-            let lHeight = this.data.get('lHeight');
-            if (typeof lHeight !== 'function') {
-                throw new TypeError('(from LongList)lHeight should be a function.');
-            }
-            return lHeight(keeps, dl, size);
-        }
     }
-});
+}
+

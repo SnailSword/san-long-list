@@ -1,0 +1,77 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+body>div {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+}
+
+.container {
+    width: 100%;
+}
+
+input.filter {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #fff;
+    color: #fff;
+    outline:none;
+    width: 50px;
+}
+
+.footer {
+    text-align: center;
+    border-top: 1px solid #444;
+}
+
+@media only screen and (min-width: 500px) {
+    .container {
+        width: 80%;
+        max-width: 300px;
+        margin: auto;
+        margin-top: 50px;
+        /* border: 1px solid #333; */
+        box-shadow: 3px 3px 26px #dedada;
+        border-radius: 5px;
+    }
+
+    .header {
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+    }
+}
+.header {
+    height: 30px;
+    line-height: 30px;
+    vertical-align: middle;
+    text-align: center;
+    background-color: #444;
+    color: #fff;
+}
+
+.item {
+    text-align: center;
+    height: 30px;
+    line-height: 30px;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+.item:hover {
+    background: linear-gradient(90deg, rgba(255,255,255,0) 9%,rgba(239,237,237,1) 52%,rgba(255,255,255,0) 85%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+}
+
+/* 设置滚动条的样式 */
+::-webkit-scrollbar {
+    width: 5px;
+    background: transparent;
+}
+/* 滚动槽 */
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: #c7c4c4;
+    /* -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); */
+}

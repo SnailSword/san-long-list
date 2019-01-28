@@ -11,6 +11,7 @@ export default [
             commonjs(),
             babel({
                 exclude: 'node_modules/**'
+                // presets: ['es2015-rollup']
             })
         ],
         external: ['san'],

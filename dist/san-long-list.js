@@ -180,7 +180,7 @@
         keeps = typeof keeps === 'number' ? keeps : 0;
         var curds = [];
 
-        for (var i = start - radius; i < start + radius - keeps; i++) {
+        for (var i = start - radius; i < start + radius + keeps; i++) {
           if (i < 0 || i >= datasource.length) {
             continue;
           }
@@ -195,7 +195,7 @@
 
         var iStyle = {
           'padding-top': pt + 'px',
-          'padding-bottom': datasource.length * size - pt - (radius * 2 - keeps) * size + 'px'
+          'padding-bottom': datasource.length * size - pt - (radius * 2 + keeps) * size + 'px'
         };
         this.data.merge('iStyle', iStyle);
       }

@@ -1,7 +1,7 @@
 "use strict";
 
 var MyApp = san.defineComponent({
-  template: "<template>\n        <div class=\"container\">\n            <div class=\"header\">\n                keeps = 10 , size = 30\n            </div>\n            <long-list keeps=\"{{10}}\" datasource=\"{{list}}\" size=\"{{30}}\">\n                <div class=\"item\">\n                    {{item}}\n                </div>\n            </long-list>\n        </div>\n    </template>",
+  template: "<template>\n        <div class=\"container\">\n            <div class=\"header\">\n                keeps = 16 , size = 30\n            </div>\n            <long-list keeps=\"{{16}}\" datasource=\"{{list}}\" size=\"{{30}}\">\n                <div class=\"item\">\n                    {{item}}\n                </div>\n            </long-list>\n        </div>\n    </template>",
   components: {
     'long-list': LongList
   },

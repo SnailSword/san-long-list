@@ -165,7 +165,7 @@ export default class LongList extends Component{
         let {datasource, radius, keeps, size} = this.data.get();
         keeps = typeof keeps === 'number' ? keeps : 0;
         let curds = [];
-        for (let i = start - radius; i < start + radius - keeps; i++) {
+        for (let i = start - radius; i < start + radius + keeps; i++) {
             if (i < 0 || i >= datasource.length) {
                 continue;
             }
@@ -180,7 +180,7 @@ export default class LongList extends Component{
         // radius * 2 - keeps 是所有渲染出来了的item的高度
         let iStyle = {
             'padding-top': pt + 'px',
-            'padding-bottom': (datasource.length * size - pt - (radius * 2 - keeps) * size) + 'px'
+            'padding-bottom': (datasource.length * size - pt - (radius * 2 + keeps) * size) + 'px'
         };
         this.data.merge('iStyle', iStyle);
     }

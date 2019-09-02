@@ -2,9 +2,9 @@ let MyApp = san.defineComponent({
     template: `<template>
         <div class="container">
             <div class="header">
-                keeps = 10 , size = 30
+                keeps = 16 , size = 30
             </div>
-            <long-list keeps="{{10}}" datasource="{{list}}" size="{{30}}">
+            <long-list keeps="{{16}}" datasource="{{list}}" size="{{30}}">
                 <div class="item">
                     {{item}}
                 </div>
